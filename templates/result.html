@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Driver Found</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h1> Driver Found</h1>
+
+<h2>{{ driver.name }}</h2>
+<p><strong>📍 Pickup:</strong> {{ pickup }}</p>
+
+<p><strong> Destination:</strong> {{ destination }}</p>
+
+<p><strong>Route Distance:</strong> {{ distance }} km</p>
+
+<p><strong>⭐ Rating:</strong> {{ driver.rating }}</p>
+
+<p><strong>🚗 Vehicle:</strong>
+{{ driver.vehicle.brand }}
+{{ driver.vehicle.model }}
+</p>
+
+<p style="color:green;">
+ Selected because this driver is nearest.
+</p>
+
+<hr>
+
+<p>
+🟢 Available Now
+</p>
+<p>⭐ Rating : {{ driver.rating }}</p>
+
+<p> Vehicle :
+{{ driver.vehicle.brand }}
+{{ driver.vehicle.model }}</p>
+
+<p> Color :
+{{ driver.vehicle.color }}</p>
+
+<br>
+
+<a href="/">
+<button>
+Book Another Ride
+</button>
+</a>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <div class="logo">
+      <h1>🚖 Travelling App</h1>
+      <p>Book your ride in seconds</p>
+    </div>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>🚖 Travelling App</h1>
+
+        <form action="/find-driver" method="POST">
+          <label>Pickup Location</label>
+
+          <select name="pickup">
+            {% for location in locations %}
+
+            <option>{{ location }}</option>
+
+            {% endfor %}
+          </select>
+          <select name="destination">
+            {% for location in locations %}
+
+            <option>{{ location }}</option>
+
+            {% endfor %}
+          </select>
+          <button type="submit">Find Driver</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
