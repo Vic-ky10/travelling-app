@@ -22,11 +22,25 @@
 <h2>{{ driver.name }}</h2>
 <p><strong>📍 Pickup:</strong> {{ pickup }}</p>
 
-<p><strong> Destination:</strong> {{ destination }}</p>
+<p><strong> * Destination:</strong> {{ destination }}</p>
 
 <p><strong>Route Distance:</strong> {{ distance }} km</p>
+<hr>
+
+<h3>Route</h3>
+
+<ul>
+
+{% for place in path %}
+
+<li>{{ place }}</li>
+
+{% endfor %}
+
+</ul>
 
 <p><strong>⭐ Rating:</strong> {{ driver.rating }}</p>
+<p><strong> Driver Score:</strong> {{ score }}</p>
 
 <p><strong>🚗 Vehicle:</strong>
 {{ driver.vehicle.brand }}
