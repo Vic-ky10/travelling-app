@@ -24,10 +24,17 @@ class RideService:
     drivers,
     graph
 ):
-        best_driver,score = self.matching_service.find_best_driver(
+        driver_options = self.matching_service.rank_drivers(
             passenger,
             drivers
         )
+
+        best_driver = None
+        score = 0
+
+        if driver_options:
+            best_driver = driver_options[0]["driver"]
+            score = driver_options[0]["score"]
         
         distance, path = self.navigation_service.find_shortest_path(
             graph,
@@ -43,6 +50,8 @@ class RideService:
 
         "path": path,
         
-        "score":score
+        "score":score,
+
+        "driver_options": driver_options
 
     }

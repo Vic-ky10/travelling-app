@@ -1,82 +1,86 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Choose Driver</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
 
-<head>
-    <meta charset="UTF-8">
+  <body>
+    <div class="container">
+      <div class="card result-card">
+        <h1>Choose Your Driver</h1>
 
-    <title>Driver Found</title>
+        <div class="trip-details">
+          <p><strong>Pickup:</strong> {{ pickup }}</p>
+          <p><strong>Destination:</strong> {{ destination }}</p>
+          <p><strong>Route Distance:</strong> {{ distance }} km</p>
+        </div>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+        <div class="recommend-box">
+          <span>Recommended</span>
+          <div class="driver-summary">
+            <div>
+              <h2>{{ driver.name }}</h2>
+              <p>{{ driver.vehicle.brand }} {{ driver.vehicle.model }}</p>
+            </div>
+            <div class="score-badge">{{ score }}/10</div>
+          </div>
+          <div class="score-bar">
+            <div style="width: {{ score * 10 }}%;"></div>
+          </div>
+        </div>
 
-</head>
+        <h3>Top Drivers Near You</h3>
 
-<body>
+        <div class="driver-list">
+          {% for option in driver_options[:3] %}
+          <form class="driver-option" action="/choose-driver" method="POST">
+            <input type="hidden" name="driver_id" value="{{ option.driver.user_id }}" />
+            <input type="hidden" name="pickup" value="{{ pickup }}" />
+            <input type="hidden" name="destination" value="{{ destination }}" />
 
-<div class="container">
+            <div>
+              <div class="driver-row-title">
+                <strong>{{ option.driver.name }}</strong>
+                {% if loop.first %}
+                <span>Best Match</span>
+                {% endif %}
+              </div>
+              <p>
+                {{ option.driver.vehicle.brand }} {{ option.driver.vehicle.model }}
+                - {{ option.driver.vehicle.color }}
+              </p>
+              <p>Rating: {{ option.driver.rating }} | Distance: {{ option.pickup_distance }}</p>
+            </div>
 
-<div class="card">
+            <div class="driver-action">
+              <div class="score-badge small">{{ option.score }}/10</div>
+              <button type="submit">Choose</button>
+            </div>
+          </form>
+          {% endfor %}
+        </div>
 
-<h1> Driver Found</h1>
+        <hr />
 
-<h2>{{ driver.name }}</h2>
-<p><strong>📍 Pickup:</strong> {{ pickup }}</p>
+        <h3>Route</h3>
+        <div class="route-path">
+          {% for place in path %}
+          <span>{{ place }}</span>
+          {% if not loop.last %}
+          <strong>➡️</strong>
+          {% endif %}
+          {% endfor %}
+        </div>
 
-<p><strong> * Destination:</strong> {{ destination }}</p>
-
-<p><strong>Route Distance:</strong> {{ distance }} km</p>
-<hr>
-
-<h3>Route</h3>
-
-<ul>
-
-{% for place in path %}
-
-<li>{{ place }}</li>
-
-{% endfor %}
-
-</ul>
-
-<p><strong>⭐ Rating:</strong> {{ driver.rating }}</p>
-<p><strong> Driver Score:</strong> {{ score }}</p>
-
-<p><strong>🚗 Vehicle:</strong>
-{{ driver.vehicle.brand }}
-{{ driver.vehicle.model }}
-</p>
-
-<p style="color:green;">
- Selected because this driver is nearest.
-</p>
-
-<hr>
-
-<p>
-🟢 Available Now
-</p>
-<p>⭐ Rating : {{ driver.rating }}</p>
-
-<p> Vehicle :
-{{ driver.vehicle.brand }}
-{{ driver.vehicle.model }}</p>
-
-<p> Color :
-{{ driver.vehicle.color }}</p>
-
-<br>
-
-<a href="/">
-<button>
-Book Another Ride
-</button>
-</a>
-
-</div>
-
-</div>
-
-</body>
-
+        <a href="/">
+          <button>Change Location</button>
+        </a>
+      </div>
+    </div>
+  </body>
 </html>

@@ -79,8 +79,10 @@ from services.matching_service import MatchingService
 
 MatchingService = MatchingService()
 
-best_driver = MatchingService.find_best_driver(drivers)
+best_driver, score = MatchingService.find_best_driver(user, drivers)
 print("\n Best Driver Selected")
+best_driver.display_driver_info()
+print(f"Driver Score : {score}")
 
 
 tracking_service = Trackingservice()
@@ -94,18 +96,22 @@ tracking_service.move_driver(
 driver.display_driver_info()
 
 
-from services.ride_service import Rideservice
+from services.ride_service import RideService
 
-ride_service = Rideservice()
+ride_service = RideService()
 
 ride = ride_service.book_ride(
+    pickup="Home",
+    destination="Office",
     passenger=user,
-    drivers= drivers,
-    pickup="Tambaram",
-    drop="T Nagar"
+    drivers=drivers,
+    graph=graph
 )
 
-ride.display_ride()
+print("\n=== Ride Booked ===")
+print(f"Driver : {ride['driver'].name}")
+print(f"Distance : {ride['distance']} km")
+print("Route :", "-> ".join(ride["path"]))
 
 
 

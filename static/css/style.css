@@ -19,13 +19,17 @@ body{
 
     align-items:center;
 
-    height:100vh;
+    min-height:100vh;
+
+    padding:25px;
 
 }
 
 .card{
 
     width:420px;
+
+    max-width:100%;
 
     background:white;
 
@@ -149,4 +153,259 @@ button:hover{
 
     transform:scale(1.02);
 
+}
+
+.result-card{
+    width:620px;
+}
+
+.driver-summary{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:14px;
+}
+
+.driver-summary h2{
+    margin-bottom:4px;
+}
+
+.driver-summary p{
+    margin-top:0;
+    color:#666;
+}
+
+.score-badge{
+    min-width:74px;
+    padding:10px 12px;
+    border-radius:8px;
+    background:#e9f5ff;
+    color:#0056b3;
+    font-weight:bold;
+    text-align:center;
+}
+
+.score-bar{
+    width:100%;
+    height:10px;
+    overflow:hidden;
+    border-radius:8px;
+    background:#e9ecef;
+    margin-bottom:20px;
+}
+
+.score-bar div{
+    height:100%;
+    border-radius:8px;
+    background:#28a745;
+}
+
+.trip-details{
+    padding:14px;
+    border-radius:8px;
+    background:#f8f9fa;
+}
+
+.trip-details p:first-child{
+    margin-top:0;
+}
+
+.recommend-box{
+    margin:20px 0;
+    padding:16px;
+    border:1px solid #b7dcff;
+    border-radius:8px;
+    background:#f3f9ff;
+}
+
+.recommend-box > span{
+    display:inline-block;
+    margin-bottom:12px;
+    padding:6px 10px;
+    border-radius:8px;
+    background:#007bff;
+    color:white;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.driver-list{
+    display:grid;
+    gap:12px;
+    margin-top:12px;
+}
+
+.driver-option{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    background:white;
+}
+
+.driver-option p{
+    margin-top:6px;
+    color:#666;
+}
+
+.driver-row-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.driver-row-title span{
+    padding:4px 8px;
+    border-radius:8px;
+    background:#e8f7ed;
+    color:#218838;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.driver-action{
+    width:92px;
+    flex-shrink:0;
+}
+
+.driver-action button{
+    margin-top:8px;
+    padding:10px;
+    font-size:14px;
+}
+
+.score-badge.small{
+    min-width:0;
+    padding:8px;
+}
+
+.route-path{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:12px;
+    padding:14px;
+    border-radius:8px;
+    background:#f8f9fa;
+}
+
+.route-path span{
+    padding:7px 10px;
+    border-radius:8px;
+    background:white;
+    border:1px solid #ddd;
+    font-weight:bold;
+}
+
+.route-path strong{
+    color:#007bff;
+}
+
+.pickup-tracker{
+    margin-bottom:20px;
+    padding:16px;
+    border-radius:8px;
+    background:#f8f9fa;
+}
+
+.tracker-labels{
+    display:flex;
+    justify-content:space-between;
+    color:#666;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.pickup-line{
+    position:relative;
+    height:10px;
+    margin:22px 0 18px;
+    border-radius:8px;
+    background:#d8dee6;
+}
+
+.pickup-progress{
+    width:100%;
+    height:100%;
+    border-radius:8px;
+    background:#28a745;
+    transform-origin:left;
+    animation:pickupProgress linear forwards;
+}
+
+.pickup-car{
+    position:absolute;
+    top:-20px;
+    left:0;
+    width:36px;
+    height:36px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:white;
+    box-shadow:0 4px 12px rgba(0,0,0,.18);
+    animation:pickupCarMove linear forwards;
+}
+
+.pickup-status{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+}
+
+.pickup-status p{
+    margin-top:5px;
+    color:#666;
+}
+
+.distance-left{
+    min-width:95px;
+    padding:10px;
+    border-radius:8px;
+    background:white;
+    text-align:center;
+}
+
+@keyframes pickupProgress{
+    from{
+        transform:scaleX(0);
+    }
+
+    to{
+        transform:scaleX(1);
+    }
+}
+
+@keyframes pickupCarMove{
+    from{
+        left:0;
+    }
+
+    to{
+        left:calc(100% - 36px);
+    }
+}
+
+@media (max-width:600px){
+    .driver-option{
+        align-items:stretch;
+        flex-direction:column;
+    }
+
+    .driver-action{
+        width:100%;
+    }
+
+    .pickup-status{
+        align-items:stretch;
+        flex-direction:column;
+    }
 }

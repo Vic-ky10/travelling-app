@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ride Booked</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="card result-card">
+        <h1>Ride Booked</h1>
+
+        <div class="driver-summary">
+          <div>
+            <h2>{{ driver.name }}</h2>
+            <p>{{ driver.vehicle.brand }} {{ driver.vehicle.model }}</p>
+          </div>
+          <div class="score-badge">{{ score }}/10</div>
+        </div>
+
+        <div
+          class="pickup-tracker"
+          data-distance="{{ pickup_distance }}"
+          data-duration="{{ tracking_duration }}"
+          data-arrival="{{ arrival_minutes }}"
+        >
+          <div class="tracker-labels">
+            <span>Driver</span>
+            <span>Pickup</span>
+          </div>
+          <div class="pickup-line">
+            <div class="pickup-progress"></div>
+            <div class="pickup-car">🚗</div>
+          </div>
+          <div class="pickup-status">
+            <div>
+              <strong id="pickup-status">Driver is coming to pickup</strong>
+              <p id="arrival-time">Reaching in {{ arrival_minutes }} min</p>
+            </div>
+            <div class="distance-left">
+              <strong id="pickup-distance-left">{{ pickup_distance }} km</strong>
+              <p>remaining</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="trip-details">
+          <p><strong>Pickup:</strong> {{ pickup }}</p>
+          <p><strong>Destination:</strong> {{ destination }}</p>
+          <p><strong>Route Distance:</strong> {{ distance }} km</p>
+          <p><strong>Driver Distance:</strong> {{ pickup_distance }} km</p>
+        </div>
+
+        <p><strong>Rating:</strong> {{ driver.rating }}</p>
+        <p><strong>Vehicle:</strong> {{ driver.vehicle.brand }} {{ driver.vehicle.model }}</p>
+        <p><strong>Color:</strong> {{ driver.vehicle.color }}</p>
+        <p><strong>Status:</strong> Driver assigned</p>
+
+        <hr />
+
+        <h3>Route</h3>
+        <div class="route-path">
+          {% for place in path %}
+          <span>{{ place }}</span>
+          {% if not loop.last %}
+          <strong>➡️</strong>
+          {% endif %}
+          {% endfor %}
+        </div>
+
+        <a href="/">
+          <button>Book Another Ride</button>
+        </a>
+      </div>
+    </div>
+
+    <script>
+      const pickupTracker = document.querySelector(".pickup-tracker");
+      const pickupProgress = document.querySelector(".pickup-progress");
+      const pickupCar = document.querySelector(".pickup-car");
+      const pickupDistanceLeft = document.querySelector("#pickup-distance-left");
+      const pickupStatus = document.querySelector("#pickup-status");
+      const arrivalTime = document.querySelector("#arrival-time");
+
+      const totalPickupDistance = Number(pickupTracker.dataset.distance);
+      const duration = Number(pickupTracker.dataset.duration);
+      const totalArrivalMinutes = Number(pickupTracker.dataset.arrival);
+      const startTime = Date.now();
+
+      pickupProgress.style.animationDuration = `${duration}s`;
+      pickupCar.style.animationDuration = `${duration}s`;
+
+      const pickupTimer = setInterval(() => {
+        const elapsed = (Date.now() - startTime) / 1000;
+        const progress = Math.min(elapsed / duration, 1);
+        const remainingDistance = Math.max(totalPickupDistance * (1 - progress), 0);
+        const remainingMinutes = Math.max(Math.ceil(totalArrivalMinutes * (1 - progress)), 0);
+
+        pickupDistanceLeft.textContent = `${remainingDistance.toFixed(2)} km`;
+
+        if (progress < 1) {
+          pickupStatus.textContent = "Driver is coming to pickup";
+          arrivalTime.textContent = `Reaching in ${remainingMinutes} min`;
+        } else {
+          pickupStatus.textContent = "Driver reached pickup";
+          arrivalTime.textContent = "Passenger pickup ready";
+          clearInterval(pickupTimer);
+        }
+      }, 400);
+    </script>
+  </body>
+</html>
