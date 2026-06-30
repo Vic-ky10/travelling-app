@@ -19,34 +19,46 @@
         </div>
       </header>
 
-      <main class="home-layout">
-        <section class="hero-panel">
-   
-          <p>
-            Compare nearby drivers, predicted fare, trip time, route distance,
-            and live pickup tracking before your journey starts.
-          </p>
+      <main class="map-home-layout">
+        <section class="city-map-panel">
+          <div class="map-heading">
+            <span class="hero-pill">Live city graph</span>
+            <h1>Choose your ride from the city map.</h1>
+            <p>
+              Every point is a location node. Every road line is a graph edge.
+              After booking, the shortest route becomes your trip path.
+            </p>
+          </div>
 
-          <div class="hero-stats">
-            <div>
-              <strong>10+</strong>
-              <span>city locations</span>
+          <div class="city-map">
+            <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            {% for road in map_data.roads %}
+              <line
+                class="map-road-line"
+                x1="{{ road.x1 }}"
+                y1="{{ road.y1 }}"
+                x2="{{ road.x2 }}"
+                y2="{{ road.y2 }}"
+              />
+            {% endfor %}  
+            </svg>
+
+            {% for location in map_data.locations %}
+            <div
+              class="map-node"
+              style="left: {{ location.x }}%; top: {{ location.y }}%;"
+            >
+              <span></span>
+              <strong>{{ location.name }}</strong>
             </div>
-            <div>
-              <strong>ML</strong>
-              <span>driver scoring</span>
-            </div>
-            <div>
-              <strong>Live</strong>
-              <span>ride progress</span>
-            </div>
+            {% endfor %}
           </div>
         </section>
 
-        <section class="card booking-card">
+        <section class="card booking-card map-booking-card">
           <div class="logo">
             <h1>Where to?</h1>
-            <p>Choose your pickup and destination</p>
+            <p>Select pickup and destination</p>
           </div>
 
           <form action="/find-driver" method="POST">

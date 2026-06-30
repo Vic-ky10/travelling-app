@@ -11,7 +11,7 @@
 
   <body>
     <div class="container">
-      <div class="card result-card">
+      <div class="card trip-map-card">
         <h1>Trip Started</h1>
 
         <div class="driver-summary">
@@ -23,28 +23,45 @@
         </div>
 
         <div
-          class="trip-tracker"
+          class="route-map"
+          data-points='{{ route_map.points | tojson }}'
           data-distance="{{ distance }}"
           data-duration="{{ trip_duration }}"
           data-minutes="{{ trip_prediction.trip_minutes }}"
         >
-          <div class="tracker-labels">
-            <span>{{ pickup }}</span>
-            <span>{{ destination }}</span>
+          <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            {% for road in route_map.roads %}
+            <line
+              class="map-road-line route-road-line"
+              x1="{{ road.x1 }}"
+              y1="{{ road.y1 }}"
+              x2="{{ road.x2 }}"
+              y2="{{ road.y2 }}"
+            />
+            {% endfor %}
+          </svg>
+
+          {% for location in route_map.locations %}
+          <div
+            class="map-node route-node"
+            style="left: {{ location.x }}%; top: {{ location.y }}%;"
+          >
+            <span></span>
+            <strong>{{ location.name }}</strong>
           </div>
-          <div class="pickup-line">
-            <div class="pickup-progress"></div>
-            <div class="pickup-car">🚗</div>
+          {% endfor %}
+
+          <div class="map-car">🚗</div>
+        </div>
+
+        <div class="pickup-status">
+          <div>
+            <strong id="trip-status">Passenger trip in progress</strong>
+            <p id="trip-time-left">{{ trip_prediction.trip_minutes }} min remaining</p>
           </div>
-          <div class="pickup-status">
-            <div>
-              <strong id="trip-status">Passenger trip in progress</strong>
-              <p id="trip-time-left">{{ trip_prediction.trip_minutes }}min remaining</p>
-            </div>
-            <div class="distance-left">
-              <strong id="trip-distance-left">{{ distance }} km</strong>
-              <p>remaining</p>
-            </div>
+          <div class="distance-left">
+            <strong id="trip-distance-left">{{ distance }} km</strong>
+            <p>remaining</p>
           </div>
         </div>
 
@@ -81,17 +98,37 @@
     </div>
 
     <script>
-      const tripTracker = document.querySelector(".trip-tracker");
+      const routeMap = document.querySelector(".route-map");
+      const mapCar = document.querySelector(".map-car");
       const tripDistanceLeft = document.querySelector("#trip-distance-left");
       const tripTimeLeft = document.querySelector("#trip-time-left");
       const tripStatus = document.querySelector("#trip-status");
-      const tripDistance = Number(tripTracker.dataset.distance);
-      const tripDuration = Number(tripTracker.dataset.duration);
-      const tripMinutes = Number(tripTracker.dataset.minutes);
+      const routePoints = JSON.parse(routeMap.dataset.points);
+      const tripDistance = Number(routeMap.dataset.distance);
+      const tripDuration = Number(routeMap.dataset.duration);
+      const tripMinutes = Number(routeMap.dataset.minutes);
       const tripStartTime = Date.now();
 
-      document.querySelector(".pickup-progress").style.animationDuration = `${tripDuration}s`;
-      document.querySelector(".pickup-car").style.animationDuration = `${tripDuration}s`;
+      function moveCar(progress) {
+        const segmentCount = routePoints.length - 1;
+
+        if (segmentCount <= 0) {
+          return;
+        }
+
+        const scaledProgress = progress * segmentCount;
+        const segmentIndex = Math.min(Math.floor(scaledProgress), segmentCount - 1);
+        const segmentProgress = scaledProgress - segmentIndex;
+        const start = routePoints[segmentIndex];
+        const end = routePoints[segmentIndex + 1];
+        const x = start.x + ((end.x - start.x) * segmentProgress);
+        const y = start.y + ((end.y - start.y) * segmentProgress);
+
+        mapCar.style.left = `${x}%`;
+        mapCar.style.top = `${y}%`;
+      }
+
+      moveCar(0);
 
       const tripTimer = setInterval(() => {
         const elapsed = (Date.now() - tripStartTime) / 1000;
@@ -99,6 +136,7 @@
         const remainingDistance = Math.max(tripDistance * (1 - progress), 0);
         const remainingMinutes = Math.max(Math.ceil(tripMinutes * (1 - progress)), 0);
 
+        moveCar(progress);
         tripDistanceLeft.textContent = `${remainingDistance.toFixed(1)} km`;
         tripTimeLeft.textContent = `${remainingMinutes} min remaining`;
 

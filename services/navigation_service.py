@@ -15,6 +15,9 @@ class NavigationService:
 
             current_distance, current_node = heapq.heappop(priority_queue)
 
+            if current_distance > distances[current_node]:
+                continue
+
             for neighbor, weight in graph[current_node].items():
 
                 distance = current_distance + weight
@@ -42,4 +45,4 @@ class NavigationService:
 
         path.reverse()
 
-        return distances[destination], path
+        return round(distances[destination], 2), path

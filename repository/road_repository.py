@@ -1,115 +1,143 @@
+from repository.location_repository import LocationRepository
+
+
 class RoadRepository:
 
     def get_graph(self):
 
-        return {
+        locations = LocationRepository().get_all_locations()
+        connections = {
 
-            "Home": {
+            "Home": [
 
-                "Mall": 2,
+                "Mall",
 
-                "School": 5,
+                "School",
 
-                "Airport": 3,
+                "Airport",
 
-                "City Park": 4
+                "City Park"
 
-            },
+            ],
 
-            "Mall": {
+            "Mall": [
 
-                "Home": 2,
+                "Home",
 
-                "Office": 4,
+                "Office",
 
-                "Hospital": 3,
+                "Hospital",
 
-                "Railway Station": 2,
+                "Railway Station",
 
-                "City Park": 3
+                "City Park"
 
-            },
+            ],
 
-            "School": {
+            "School": [
 
-                "Home": 5,
+                "Home",
 
-                "Hospital": 2,
+                "Hospital",
 
-                "City Park": 2
+                "City Park"
 
-            },
+            ],
 
-            "Hospital": {
+            "Hospital": [
 
-                "School": 2,
+                "School",
 
-                "Mall": 3,
+                "Mall",
 
-                "Office": 2,
+                "Office",
 
-                "Tech Park": 3
+                "Tech Park"
 
-            },
+            ],
 
-            "Office": {
+            "Office": [
 
-                "Mall": 4,
+                "Mall",
 
-                "Hospital": 2,
+                "Hospital",
 
-                "Tech Park": 2
+                "Tech Park"
 
-            },
+            ],
 
-            "Airport": {
+            "Airport": [
 
-                "Home": 3,
+                "Home",
 
-                "Beach": 4,
+                "Beach",
 
-                "Railway Station": 5
+                "Railway Station"
 
-            },
+            ],
 
-            "Railway Station": {
+            "Railway Station": [
 
-                "Mall": 2,
+                "Mall",
 
-                "Airport": 5,
+                "Airport",
 
-                "Beach": 2
+                "Beach"
 
-            },
+            ],
 
-            "Beach": {
+            "Beach": [
 
-                "Airport": 4,
+                "Airport",
 
-                "Railway Station": 2,
+                "Railway Station",
 
-                "City Park": 5
+                "City Park"
 
-            },
+            ],
 
-            "Tech Park": {
+            "Tech Park": [
 
-                "Office": 2,
+                "Office",
 
-                "Hospital": 3
+                "Hospital"
 
-            },
+            ],
 
-            "City Park": {
+            "City Park": [
 
-                "Home": 4,
+                "Home",
 
-                "Mall": 3,
+                "Mall",
 
-                "School": 2,
+                "School",
 
-                "Beach": 5
+                "Beach"
 
-            }
+            ]
 
         }
+
+        graph = {}
+
+        for start, neighbors in connections.items():
+            graph[start] = {}
+
+            for end in neighbors:
+                graph[start][end] = self.calculate_distance(
+                    locations[start],
+                    locations[end]
+                )
+
+        return graph
+
+    def calculate_distance(self, start, end):
+
+        latitude_difference = start[0] - end[0]
+        longitude_difference = start[1] - end[1]
+        distance = (
+            (latitude_difference ** 2) +
+            (longitude_difference ** 2)
+        ) ** 0.5
+
+        return round(max(distance * 55, 1), 2)

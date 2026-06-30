@@ -68,6 +68,13 @@ body{
     gap:34px;
 }
 
+.map-home-layout{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 390px;
+    align-items:stretch;
+    gap:24px;
+}
+
 .hero-panel{
     padding:18px 0;
 }
@@ -141,6 +148,133 @@ body{
     background:linear-gradient(135deg, rgba(37,99,235,.28), rgba(22,163,74,.22));
 }
 
+.map-booking-card{
+    align-self:start;
+}
+
+.city-map-panel{
+    min-height:650px;
+    padding:22px;
+    border:1px solid rgba(223,229,236,.9);
+    border-radius:8px;
+    background:var(--surface);
+    box-shadow:var(--shadow);
+}
+
+.map-heading{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:20px;
+    margin-bottom:18px;
+}
+
+.map-heading h1{
+    max-width:430px;
+    margin-bottom:8px;
+    font-size:34px;
+    text-align:left;
+}
+
+.map-heading p{
+    max-width:470px;
+    margin-top:0;
+}
+
+.city-map,
+.route-map{
+    position:relative;
+    overflow:hidden;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:
+        linear-gradient(90deg, rgba(37,99,235,.06) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(37,99,235,.06) 1px, transparent 1px),
+        #f8fbff;
+    background-size:44px 44px;
+}
+
+.city-map{
+    height:500px;
+}
+
+.route-map{
+    height:360px;
+    margin-bottom:18px;
+}
+
+.map-svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:1;
+}
+
+.map-road-line{
+    stroke:#cbd5e1;
+    stroke-width:1.2;
+    stroke-linecap:round;
+    vector-effect:non-scaling-stroke;
+}
+
+.route-road-line{
+    stroke:var(--green);
+    stroke-width:2.6;
+    filter:drop-shadow(0 0 4px rgba(22,163,74,.25));
+}
+
+.map-node{
+    position:absolute;
+    z-index:3;
+    transform:translate(-50%,-7px);
+}
+
+.map-node span{
+    width:15px;
+    height:15px;
+    display:block;
+    margin:0 auto 6px;
+    border:3px solid white;
+    border-radius:50%;
+    background:var(--blue);
+    box-shadow:0 5px 14px rgba(37,99,235,.28);
+}
+
+.map-node strong{
+    display:block;
+    min-width:72px;
+    padding:5px 7px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:rgba(255,255,255,.92);
+    color:#111827;
+    font-size:11px;
+    text-align:center;
+    white-space:nowrap;
+    box-shadow:0 6px 14px rgba(17,24,39,.08);
+}
+
+.route-node span{
+    background:var(--green);
+}
+
+.map-car{
+    position:absolute;
+    z-index:5;
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid var(--border);
+    border-radius:50%;
+    background:white;
+    box-shadow:0 10px 22px rgba(17,24,39,.18);
+    transform:translate(-50%,-50%);
+    transition:left .38s linear, top .38s linear;
+}
+
 .container{
     display:flex;
     justify-content:center;
@@ -161,6 +295,10 @@ body{
 
 .result-card{
     width:720px;
+}
+
+.trip-map-card{
+    width:820px;
 }
 
 h1{
@@ -599,6 +737,23 @@ a button:hover{
 
     .home-layout{
         grid-template-columns:1fr;
+    }
+
+    .map-home-layout{
+        grid-template-columns:1fr;
+    }
+
+    .city-map-panel{
+        min-height:auto;
+        padding:16px;
+    }
+
+    .map-heading{
+        display:block;
+    }
+
+    .city-map{
+        height:430px;
     }
 
     .hero-panel h1{

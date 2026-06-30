@@ -8,6 +8,7 @@ from repository.road_repository import RoadRepository
 
 
 from services.ride_service import RideService
+from services.map_service import MapService
 
 
 
@@ -19,6 +20,7 @@ driver_repository = DriverRepository()
 location_repository = LocationRepository()                
 road_repository = RoadRepository()
 ride_service = RideService()
+map_service = MapService()
 
      
 
@@ -27,10 +29,15 @@ def home():
     locations = list(
     location_repository.get_all_locations().keys()
 )
+    map_data = map_service.build_city_map(
+        location_repository.get_all_locations(),
+        road_repository.get_graph()
+    )
     
     return render_template(
         "home.html",
-        locations = locations
+        locations = locations,
+        map_data = map_data
     )
 
 
@@ -193,7 +200,11 @@ def start_trip():
         distance=distance,
         path=path,
         trip_prediction=trip_prediction,
-        trip_duration=trip_duration
+        trip_duration=trip_duration,
+        route_map=map_service.build_route_map(
+            location_repository.get_all_locations(),
+            path
+        )
     )
 
 if __name__ == "__main__":
