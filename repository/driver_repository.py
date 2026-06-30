@@ -59,7 +59,7 @@ class DriverRepository:
             Vehicle(
                 "TN40GH2222",
                 "Toyota",
-                "Etios",
+                 "Etios",
                 "Blue",
                 "Car"
             ),
@@ -81,10 +81,58 @@ class DriverRepository:
             4.6
         )
 
+        driver6 = Driver(
+            106,
+            "Meena",
+            13.02,
+            80.22,
+            Vehicle(
+                "TN60LM4321",
+                "Tata",
+                "Nexon",
+                "Silver",
+                "SUV"
+            ),
+            4.8
+        )
+
+        driver7 = Driver(
+            107,
+            "Sanjay",
+            13.30,
+            80.44,
+            Vehicle(
+                "TN70NP2468",
+                "Mahindra",
+                "XUV300",
+                "White",
+                "SUV"
+            ),
+            4.7
+        )
+
+        driver8 = Driver(
+            108,
+            "Divya",
+            13.07,
+            80.28,
+            Vehicle(
+                "TN80QR1357",
+                "Skoda",
+                "Slavia",
+                "Blue",
+                "Premium"
+            ),
+            4.9
+        )
+
         return [
             driver1,
             driver2,
             driver3,
             driver4,
-            driver5
+            driver5,
+            driver6,
+            driver7,
+            driver8
         ]

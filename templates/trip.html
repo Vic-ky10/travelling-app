@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Trip Started</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="card result-card">
+        <h1>Trip Started</h1>
+
+        <div class="driver-summary">
+          <div>
+            <h2>{{ driver.name }}</h2>
+            <p>{{ driver.vehicle.brand }} {{ driver.vehicle.model }}</p>
+          </div>
+          <div class="score-badge">Rs {{ trip_prediction.fare }}</div>
+        </div>
+
+        <div
+          class="trip-tracker"
+          data-distance="{{ distance }}"
+          data-duration="{{ trip_duration }}"
+          data-minutes="{{ trip_prediction.trip_minutes }}"
+        >
+          <div class="tracker-labels">
+            <span>{{ pickup }}</span>
+            <span>{{ destination }}</span>
+          </div>
+          <div class="pickup-line">
+            <div class="pickup-progress"></div>
+            <div class="pickup-car">🚗</div>
+          </div>
+          <div class="pickup-status">
+            <div>
+              <strong id="trip-status">Passenger trip in progress</strong>
+              <p id="trip-time-left">{{ trip_prediction.trip_minutes }}min remaining</p>
+            </div>
+            <div class="distance-left">
+              <strong id="trip-distance-left">{{ distance }} km</strong>
+              <p>remaining</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="analytics-grid">
+          <div>
+            <strong>{{ trip_prediction.traffic_level }}</strong>
+            <span>traffic</span>
+          </div>
+          <div>
+            <strong>{{ trip_prediction.trip_minutes }} min</strong>
+            <span>predicted time</span>
+          </div>
+          <div>
+            <strong>{{ distance }} km</strong>
+            <span>distance</span>
+          </div>
+        </div>
+        <p class="prediction-reason">{{ trip_prediction.price_reason }}</p>
+
+        <div class="route-path">
+          <h3>Route</h3>
+          {% for place in path %}
+          <span>{{ place }}</span>
+          {% if not loop.last %}
+          <strong>➡️</strong>
+          {% endif %}
+          {% endfor %}
+        </div>
+
+        <a href="/">
+          <button>Book Another Ride</button>
+        </a>
+      </div>
+    </div>
+
+    <script>
+      const tripTracker = document.querySelector(".trip-tracker");
+      const tripDistanceLeft = document.querySelector("#trip-distance-left");
+      const tripTimeLeft = document.querySelector("#trip-time-left");
+      const tripStatus = document.querySelector("#trip-status");
+      const tripDistance = Number(tripTracker.dataset.distance);
+      const tripDuration = Number(tripTracker.dataset.duration);
+      const tripMinutes = Number(tripTracker.dataset.minutes);
+      const tripStartTime = Date.now();
+
+      document.querySelector(".pickup-progress").style.animationDuration = `${tripDuration}s`;
+      document.querySelector(".pickup-car").style.animationDuration = `${tripDuration}s`;
+
+      const tripTimer = setInterval(() => {
+        const elapsed = (Date.now() - tripStartTime) / 1000;
+        const progress = Math.min(elapsed / tripDuration, 1);
+        const remainingDistance = Math.max(tripDistance * (1 - progress), 0);
+        const remainingMinutes = Math.max(Math.ceil(tripMinutes * (1 - progress)), 0);
+
+        tripDistanceLeft.textContent = `${remainingDistance.toFixed(1)} km`;
+        tripTimeLeft.textContent = `${remainingMinutes} min remaining`;
+
+        if (progress >= 1) {
+          tripStatus.textContent = "Arrived at destination";
+          tripTimeLeft.textContent = "Trip completed";
+          clearInterval(tripTimer);
+        }
+      }, 400);
+    </script>
+  </body>
+</html>

@@ -78,6 +78,7 @@ def find_driver():
         distance=ride["distance"],
         path=ride["path"],
         score=ride["score"],
+        trip_prediction=ride["trip_prediction"],
     )
 
 
@@ -131,6 +132,11 @@ def choose_driver():
         destination
     )
 
+    trip_prediction = ride_service.trip_analytics_service.predict_trip(
+        distance,
+        selected_driver.vehicle
+    )
+
     tracking_duration = max(5, min(int(pickup_distance * 80) + 5, 20))
     arrival_minutes = max(1, round(pickup_distance * 20))
 
@@ -144,7 +150,50 @@ def choose_driver():
         score=selected_score,
         pickup_distance=pickup_distance,
         tracking_duration=tracking_duration,
-        arrival_minutes=arrival_minutes
+        arrival_minutes=arrival_minutes,
+        trip_prediction=trip_prediction
+    )
+
+
+@app.route("/start-trip", methods=["POST"])
+def start_trip():
+
+    pickup = request.form["pickup"]
+    destination = request.form["destination"]
+    driver_id = int(request.form["driver_id"])
+
+    drivers = driver_repository.get_all_drivers()
+    selected_driver = None
+
+    for driver in drivers:
+        if driver.user_id == driver_id:
+            selected_driver = driver
+            break
+
+    if selected_driver is None:
+        return "Driver not found", 404
+
+    graph = road_repository.get_graph()
+    distance, path = ride_service.navigation_service.find_shortest_path(
+        graph,
+        pickup,
+        destination
+    )
+    trip_prediction = ride_service.trip_analytics_service.predict_trip(
+        distance,
+        selected_driver.vehicle
+    )
+    trip_duration = max(7, min(int(distance * 2), 30))
+
+    return render_template(
+        "trip.html",
+        driver=selected_driver,
+        pickup=pickup,
+        destination=destination,
+        distance=distance,
+        path=path,
+        trip_prediction=trip_prediction,
+        trip_duration=trip_duration
     )
 
 if __name__ == "__main__":

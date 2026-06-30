@@ -10,31 +10,64 @@
   </head>
 
   <body>
-    <div class="container">
-      <div class="card">
-        <div class="logo">
-          <h1>Travelling App</h1>
-          <p>Book your ride in seconds</p>
+    <div class="home-shell">
+      <header class="site-header">
+        <div class="brand-mark">TA</div>
+        <div>
+          <strong>Travelling App</strong>
+          <p>Smart rides, clear prices, live tracking.</p>
         </div>
+      </header>
 
-        <form action="/find-driver" method="POST">
-          <label>Pickup Location</label>
-          <select name="pickup">
-            {% for location in locations %}
-            <option>{{ location }}</option>
-            {% endfor %}
-          </select>
+      <main class="home-layout">
+        <section class="hero-panel">
+   
+          <p>
+            Compare nearby drivers, predicted fare, trip time, route distance,
+            and live pickup tracking before your journey starts.
+          </p>
 
-          <label>Destination</label>
-          <select name="destination">
-            {% for location in locations %}
-            <option>{{ location }}</option>
-            {% endfor %}
-          </select>
+          <div class="hero-stats">
+            <div>
+              <strong>10+</strong>
+              <span>city locations</span>
+            </div>
+            <div>
+              <strong>ML</strong>
+              <span>driver scoring</span>
+            </div>
+            <div>
+              <strong>Live</strong>
+              <span>ride progress</span>
+            </div>
+          </div>
+        </section>
 
-          <button type="submit">Find Driver</button>
-        </form>
-      </div>
+        <section class="card booking-card">
+          <div class="logo">
+            <h1>Where to?</h1>
+            <p>Choose your pickup and destination</p>
+          </div>
+
+          <form action="/find-driver" method="POST">
+            <label>Pickup Location</label>
+            <select name="pickup">
+              {% for location in locations %}
+              <option>{{ location }}</option>
+              {% endfor %}
+            </select>
+
+            <label>Destination</label>
+            <select name="destination">
+              {% for location in locations %}
+              <option>{{ location }}</option>
+              {% endfor %}
+            </select>
+
+            <button type="submit">Find Driver</button>
+          </form>
+        </section>
+      </main>
     </div>
   </body>
 </html>

@@ -55,15 +55,29 @@
           <p><strong>Driver Distance:</strong> {{ pickup_distance }} km</p>
         </div>
 
+        <div class="analytics-grid">
+          <div>
+            <strong>Rs {{ trip_prediction.fare }}</strong>
+            <span>estimated fare</span>
+          </div>
+          <div>
+            <strong>{{ trip_prediction.trip_minutes }} min</strong>
+            <span>trip time</span>
+          </div>
+          <div>
+            <strong>{{ trip_prediction.traffic_level }}</strong>
+            <span>traffic</span>
+          </div>
+        </div>
+        <p class="prediction-reason">{{ trip_prediction.price_reason }}</p>
+
         <p><strong>Rating:</strong> {{ driver.rating }}</p>
         <p><strong>Vehicle:</strong> {{ driver.vehicle.brand }} {{ driver.vehicle.model }}</p>
         <p><strong>Color:</strong> {{ driver.vehicle.color }}</p>
         <p><strong>Status:</strong> Driver assigned</p>
 
-        <hr />
-
-        <h3>Route</h3>
         <div class="route-path">
+          <h3>Route</h3>
           {% for place in path %}
           <span>{{ place }}</span>
           {% if not loop.last %}
@@ -71,6 +85,15 @@
           {% endif %}
           {% endfor %}
         </div>
+
+        <form action="/start-trip" method="POST">
+          <input type="hidden" name="driver_id" value="{{ driver.user_id }}" />
+          <input type="hidden" name="pickup" value="{{ pickup }}" />
+          <input type="hidden" name="destination" value="{{ destination }}" />
+          <button id="start-trip-button" type="submit" disabled>
+            Waiting for driver
+          </button>
+        </form>
 
         <a href="/">
           <button>Book Another Ride</button>
@@ -85,6 +108,7 @@
       const pickupDistanceLeft = document.querySelector("#pickup-distance-left");
       const pickupStatus = document.querySelector("#pickup-status");
       const arrivalTime = document.querySelector("#arrival-time");
+      const startTripButton = document.querySelector("#start-trip-button");
 
       const totalPickupDistance = Number(pickupTracker.dataset.distance);
       const duration = Number(pickupTracker.dataset.duration);
@@ -108,6 +132,9 @@
         } else {
           pickupStatus.textContent = "Driver reached pickup";
           arrivalTime.textContent = "Passenger pickup ready";
+          pickupDistanceLeft.textContent = "0.00 km";
+          startTripButton.disabled = false;
+          startTripButton.textContent = "Start Trip";
           clearInterval(pickupTimer);
         }
       }, 400);

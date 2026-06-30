@@ -4,6 +4,7 @@ from repository.road_repository import RoadRepository
 from models.user import User
 from services.matching_service import MatchingService
 from services.navigation_service import NavigationService
+from services.trip_analytics_service import TripAnalyticsService
 
 
 class RideService:
@@ -11,6 +12,7 @@ class RideService:
     def __init__(self):
         self.matching_service = MatchingService()
         self.navigation_service = NavigationService()
+        self.trip_analytics_service = TripAnalyticsService()
         self.driver_repository = DriverRepository()
         self.location_repository = LocationRepository()
         self.road_repository = RoadRepository()
@@ -42,6 +44,12 @@ class RideService:
             destination
         )
 
+        vehicle = best_driver.vehicle if best_driver else None
+        trip_prediction = self.trip_analytics_service.predict_trip(
+            distance,
+            vehicle
+        )
+
         return {
 
         "driver": best_driver,
@@ -53,5 +61,7 @@ class RideService:
         "score":score,
 
         "driver_options": driver_options
+
+        ,"trip_prediction": trip_prediction
 
     }

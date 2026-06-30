@@ -20,8 +20,24 @@
           <p><strong>Route Distance:</strong> {{ distance }} km</p>
         </div>
 
+        <div class="analytics-grid">
+          <div>
+            <strong>Rs {{ trip_prediction.fare }}</strong>
+            <span>estimated fare</span>
+          </div>
+          <div>
+            <strong>{{ trip_prediction.trip_minutes }} min</strong>
+            <span>trip time</span>
+          </div>
+          <div>
+            <strong>{{ trip_prediction.traffic_level }}</strong>
+            <span>traffic</span>
+          </div>
+        </div>
+        <p class="prediction-reason">{{ trip_prediction.price_reason }}</p>
+
         <div class="recommend-box">
-          <span>Recommended</span>
+     
           <div class="driver-summary">
             <div>
               <h2>{{ driver.name }}</h2>
@@ -32,6 +48,15 @@
           <div class="score-bar">
             <div style="width: {{ score * 10 }}%;"></div>
           </div>
+
+          {% if driver_options %}
+          <div class="ml-reasons">
+            <strong>Why recommended:</strong>
+            {% for reason in driver_options[0].reasons %}
+            <span>{{ reason }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
         </div>
 
         <h3>Top Drivers Near You</h3>
@@ -54,7 +79,19 @@
                 {{ option.driver.vehicle.brand }} {{ option.driver.vehicle.model }}
                 - {{ option.driver.vehicle.color }}
               </p>
-              <p>Rating: {{ option.driver.rating }} | Distance: {{ option.pickup_distance }}</p>
+              <p>Rating: {{ option.driver.rating }} | Distance: {{ option.pickup_distance }} km</p>
+
+              <div class="feature-row">
+                <span>Distance {{ option.feature_scores.distance }}</span>
+                <span>Rating {{ option.feature_scores.rating }}</span>
+                <span>Availability {{ option.feature_scores.availability }}</span>
+              </div>
+
+              <div class="ml-reasons compact">
+                {% for reason in option.reasons %}
+                <span>{{ reason }}</span>
+                {% endfor %}
+              </div>
             </div>
 
             <div class="driver-action">
@@ -65,10 +102,8 @@
           {% endfor %}
         </div>
 
-        <hr />
-
-        <h3>Route</h3>
         <div class="route-path">
+          <h3>Route</h3>
           {% for place in path %}
           <span>{{ place }}</span>
           {% if not loop.last %}
