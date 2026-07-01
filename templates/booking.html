@@ -10,95 +10,117 @@
   </head>
 
   <body>
-    <div class="container">
-      <div class="card result-card">
-        <h1>Ride Booked</h1>
-
-        <div class="driver-summary">
-          <div>
-            <h2>{{ driver.name }}</h2>
-            <p>{{ driver.vehicle.brand }} {{ driver.vehicle.model }}</p>
-          </div>
-          <div class="score-badge">{{ score }}/10</div>
+    <div class="dashboard-shell">
+      <header class="site-header dashboard-nav">
+        <div class="brand-mark">TA</div>
+        <div>
+          <strong>Ride Booked</strong>
+          <p>Track your driver until pickup, then start the passenger trip.</p>
         </div>
+      </header>
 
-        <div
-          class="pickup-tracker"
-          data-distance="{{ pickup_distance }}"
-          data-duration="{{ tracking_duration }}"
-          data-arrival="{{ arrival_minutes }}"
-        >
-          <div class="tracker-labels">
-            <span>Driver</span>
-            <span>Pickup</span>
-          </div>
-          <div class="pickup-line">
-            <div class="pickup-progress"></div>
-            <div class="pickup-car">🚗</div>
-          </div>
-          <div class="pickup-status">
+      <main class="dashboard-grid">
+        <section class="dashboard-main">
+          <div class="driver-summary page-summary">
             <div>
-              <strong id="pickup-status">Driver is coming to pickup</strong>
-              <p id="arrival-time">Reaching in {{ arrival_minutes }} min</p>
+              <h1>{{ driver.name }} is on the way</h1>
+              <p>{{ driver.vehicle.brand }} {{ driver.vehicle.model }} - {{ driver.vehicle.color }}</p>
             </div>
-            <div class="distance-left">
-              <strong id="pickup-distance-left">{{ pickup_distance }} km</strong>
-              <p>remaining</p>
+            <div class="score-badge">{{ score }}/10</div>
+          </div>
+
+          <div
+            class="pickup-tracker pickup-tracker-large"
+            data-distance="{{ pickup_distance }}"
+            data-duration="{{ tracking_duration }}"
+            data-arrival="{{ arrival_minutes }}"
+          >
+            <div class="tracker-labels">
+              <span >Driver</span>
+              <span>Pickup</span>
+            </div>
+            <div class="pickup-line glowing-line">
+              <div class="pickup-progress"></div>
+              <div class="pickup-car">🚗</div>
+            </div>
+            <div class="pickup-status">
+              <div>
+                <strong id="pickup-status">Driver is coming to pickup</strong>
+                <p id="arrival-time">Reaching in {{ arrival_minutes }} min</p>
+              </div>
+              <div class="distance-left">
+                <strong id="pickup-distance-left">{{ pickup_distance }} km</strong>
+                <p>remaining</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="trip-details">
-          <p><strong>Pickup:</strong> {{ pickup }}</p>
-          <p><strong>Destination:</strong> {{ destination }}</p>
-          <p><strong>Route Distance:</strong> {{ distance }} km</p>
-          <p><strong>Driver Distance:</strong> {{ pickup_distance }} km</p>
-        </div>
+          <div class="route-map dashboard-map compact-map">
+            <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+              {% for road in route_map.roads %}
+              <line
+                class="map-road-line route-road-line"
+                x1="{{ road.x1 }}"
+                y1="{{ road.y1 }}"
+                x2="{{ road.x2 }}"
+                y2="{{ road.y2 }}"
+              />
+              {% endfor %}
+            </svg>
 
-        <div class="analytics-grid">
-          <div>
-            <strong>Rs {{ trip_prediction.fare }}</strong>
-            <span>estimated fare</span>
+            {% for location in route_map.locations %}
+            <div
+              class="map-node route-node"
+              style="left: {{ location.x }}%; top: {{ location.y }}%;"
+            >
+              <span></span>
+              <strong>{{ location.name }}</strong>
+            </div>
+            {% endfor %}
           </div>
-          <div>
-            <strong>{{ trip_prediction.trip_minutes }} min</strong>
-            <span>trip time</span>
+        </section>
+
+        <aside class="dashboard-side">
+          <div class="trip-details">
+            <p><strong>Pickup:</strong> {{ pickup }}</p>
+            <p><strong>Destination:</strong> {{ destination }}</p>
+            <p><strong>Route Distance:</strong> {{ distance }} km</p>
+            <p><strong>Driver Distance:</strong> {{ pickup_distance }} km</p>
           </div>
-          <div>
-            <strong>{{ trip_prediction.traffic_level }}</strong>
-            <span>traffic</span>
+
+          <div class="analytics-grid side-analytics">
+            <div>
+              <strong>Rs {{ trip_prediction.fare }}</strong>
+              <span>estimated fare</span>
+            </div>
+            <div>
+              <strong>{{ trip_prediction.trip_minutes }} min</strong>
+              <span>trip time</span>
+            </div>
+            <div>
+              <strong>{{ trip_prediction.traffic_level }}</strong>
+              <span>traffic</span>
+            </div>
           </div>
-        </div>
-        <p class="prediction-reason">{{ trip_prediction.price_reason }}</p>
+          <p class="prediction-reason">{{ trip_prediction.price_reason }}</p>
 
-        <p><strong>Rating:</strong> {{ driver.rating }}</p>
-        <p><strong>Vehicle:</strong> {{ driver.vehicle.brand }} {{ driver.vehicle.model }}</p>
-        <p><strong>Color:</strong> {{ driver.vehicle.color }}</p>
-        <p><strong>Status:</strong> Driver assigned</p>
+          <p><strong>Rating:</strong> {{ driver.rating }}</p>
+          <p><strong>Status:</strong> Driver assigned</p>
 
-        <div class="route-path">
-          <h3>Route</h3>
-          {% for place in path %}
-          <span>{{ place }}</span>
-          {% if not loop.last %}
-          <strong>➡️</strong>
-          {% endif %}
-          {% endfor %}
-        </div>
+          <form action="/start-trip" method="POST">
+            <input type="hidden" name="driver_id" value="{{ driver.user_id }}" />
+            <input type="hidden" name="pickup" value="{{ pickup }}" />
+            <input type="hidden" name="destination" value="{{ destination }}" />
+            <button id="start-trip-button" type="submit" disabled>
+              Waiting for driver
+            </button>
+          </form>
 
-        <form action="/start-trip" method="POST">
-          <input type="hidden" name="driver_id" value="{{ driver.user_id }}" />
-          <input type="hidden" name="pickup" value="{{ pickup }}" />
-          <input type="hidden" name="destination" value="{{ destination }}" />
-          <button id="start-trip-button" type="submit" disabled>
-            Waiting for driver
-          </button>
-        </form>
-
-        <a href="/">
-          <button>Book Another Ride</button>
-        </a>
-      </div>
+          <a href="/">
+            <button>Book Another Ride</button>
+          </a>
+        </aside>
+      </main>
     </div>
 
     <script>

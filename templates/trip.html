@@ -10,91 +10,112 @@
   </head>
 
   <body>
-    <div class="container">
-      <div class="card trip-map-card">
-        <h1>Trip Started</h1>
-
-        <div class="driver-summary">
-          <div>
-            <h2>{{ driver.name }}</h2>
-            <p>{{ driver.vehicle.brand }} {{ driver.vehicle.model }}</p>
-          </div>
-          <div class="score-badge">Rs {{ trip_prediction.fare }}</div>
+    <div class="dashboard-shell">
+      <header class="site-header dashboard-nav">
+        <div class="brand-mark">TA</div>
+        <div>
+          <strong>Trip Started</strong>
+          <p>Live route map, moving car, remaining distance, and trip summary.</p>
         </div>
+      </header>
 
-        <div
-          class="route-map"
-          data-points='{{ route_map.points | tojson }}'
-          data-distance="{{ distance }}"
-          data-duration="{{ trip_duration }}"
-          data-minutes="{{ trip_prediction.trip_minutes }}"
-        >
-          <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-            {% for road in route_map.roads %}
-            <line
-              class="map-road-line route-road-line"
-              x1="{{ road.x1 }}"
-              y1="{{ road.y1 }}"
-              x2="{{ road.x2 }}"
-              y2="{{ road.y2 }}"
-            />
-            {% endfor %}
-          </svg>
+      <main class="dashboard-grid trip-dashboard-grid">
+        <section class="dashboard-main">
+          <div class="driver-summary page-summary">
+            <div>
+              <h1>{{ pickup }} to {{ destination }}</h1>
+              <p>{{ driver.name }} - {{ driver.vehicle.brand }} {{ driver.vehicle.model }}</p>
+            </div>
+            <div class="score-badge">Rs {{ trip_prediction.fare }}</div>
+          </div>
 
-          {% for location in route_map.locations %}
           <div
-            class="map-node route-node"
-            style="left: {{ location.x }}%; top: {{ location.y }}%;"
+            class="route-map dashboard-map trip-live-map"
+            data-points='{{ route_map.points | tojson }}'
+            data-distance="{{ distance }}"
+            data-duration="{{ trip_duration }}"
+            data-minutes="{{ trip_prediction.trip_minutes }}"
           >
-            <span></span>
-            <strong>{{ location.name }}</strong>
-          </div>
-          {% endfor %}
+            <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+              {% for road in route_map.roads %}
+              <line
+                class="map-road-line route-road-line"
+                x1="{{ road.x1 }}"
+                y1="{{ road.y1 }}"
+                x2="{{ road.x2 }}"
+                y2="{{ road.y2 }}"
+              />
+              {% endfor %}
+            </svg>
 
-          <div class="map-car">🚗</div>
-        </div>
+            {% for location in route_map.locations %}
+            <div
+              class="map-node route-node"
+              style="left: {{ location.x }}%; top: {{ location.y }}%;"
+            >
+              <span></span>
+              <strong>{{ location.name }}</strong>
+            </div>
+            {% endfor %}
 
-        <div class="pickup-status">
-          <div>
-            <strong id="trip-status">Passenger trip in progress</strong>
-            <p id="trip-time-left">{{ trip_prediction.trip_minutes }} min remaining</p>
+            <div class="map-car">🚗</div>
           </div>
-          <div class="distance-left">
-            <strong id="trip-distance-left">{{ distance }} km</strong>
-            <p>remaining</p>
-          </div>
-        </div>
+        </section>
 
-        <div class="analytics-grid">
-          <div>
-            <strong>{{ trip_prediction.traffic_level }}</strong>
-            <span>traffic</span>
+        <aside class="dashboard-side">
+          <div class="pickup-status">
+            <div>
+              <strong id="trip-status">Passenger trip in progress</strong>
+              <p id="trip-time-left">{{ trip_prediction.trip_minutes }} min remaining</p>
+            </div>
+            <div class="distance-left">
+              <strong id="trip-distance-left">{{ distance }} km</strong>
+              <p>remaining</p>
+            </div>
           </div>
-          <div>
-            <strong>{{ trip_prediction.trip_minutes }} min</strong>
-            <span>predicted time</span>
-          </div>
-          <div>
-            <strong>{{ distance }} km</strong>
-            <span>distance</span>
-          </div>
-        </div>
-        <p class="prediction-reason">{{ trip_prediction.price_reason }}</p>
 
-        <div class="route-path">
-          <h3>Route</h3>
-          {% for place in path %}
-          <span>{{ place }}</span>
-          {% if not loop.last %}
-          <strong>➡️</strong>
-          {% endif %}
-          {% endfor %}
-        </div>
+          <div class="analytics-grid side-analytics">
+            <div>
+              <strong>{{ trip_prediction.traffic_level }}</strong>
+              <span>traffic</span>
+            </div>
+            <div>
+              <strong>{{ trip_prediction.trip_minutes }} min</strong>
+              <span>predicted time</span>
+            </div>
+            <div>
+              <strong>{{ distance }} km</strong>
+              <span>distance</span>
+            </div>
+          </div>
+          <p class="prediction-reason">{{ trip_prediction.price_reason }}</p>
 
-        <a href="/">
-          <button>Book Another Ride</button>
-        </a>
-      </div>
+          <div class="route-path">
+            <h3>Route</h3>
+            {% for place in path %}
+            <span>{{ place }}</span>
+            {% if not loop.last %}
+            <strong>➡️</strong>
+            {% endif %}
+            {% endfor %}
+          </div>
+
+          <div id="completion-card" class="completion-card">
+            <div class="completion-emoji">🎉 ✅ ✨</div>
+            <h2>Trip Completed</h2>
+            <p>You reached {{ destination }} safely.</p>
+            <div class="completion-summary">
+              <span>{{ distance }} km</span>
+              <span>Rs {{ trip_prediction.fare }}</span>
+              <span>{{ trip_prediction.trip_minutes }} min</span>
+            </div>
+          </div>
+
+          <a href="/">
+            <button>Book Another Ride</button>
+          </a>
+        </aside>
+      </main>
     </div>
 
     <script>
@@ -103,6 +124,7 @@
       const tripDistanceLeft = document.querySelector("#trip-distance-left");
       const tripTimeLeft = document.querySelector("#trip-time-left");
       const tripStatus = document.querySelector("#trip-status");
+      const completionCard = document.querySelector("#completion-card");
       const routePoints = JSON.parse(routeMap.dataset.points);
       const tripDistance = Number(routeMap.dataset.distance);
       const tripDuration = Number(routeMap.dataset.duration);
@@ -143,6 +165,8 @@
         if (progress >= 1) {
           tripStatus.textContent = "Arrived at destination";
           tripTimeLeft.textContent = "Trip completed";
+          tripDistanceLeft.textContent = "0.0 km";
+          completionCard.classList.add("show");
           clearInterval(tripTimer);
         }
       }, 400);

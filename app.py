@@ -86,6 +86,10 @@ def find_driver():
         path=ride["path"],
         score=ride["score"],
         trip_prediction=ride["trip_prediction"],
+        route_map=map_service.build_route_map(
+            location_repository.get_all_locations(),
+            ride["path"]
+        )
     )
 
 
@@ -158,7 +162,11 @@ def choose_driver():
         pickup_distance=pickup_distance,
         tracking_duration=tracking_duration,
         arrival_minutes=arrival_minutes,
-        trip_prediction=trip_prediction
+        trip_prediction=trip_prediction,
+        route_map=map_service.build_route_map(
+            location_repository.get_all_locations(),
+            path
+        )
     )
 
 
